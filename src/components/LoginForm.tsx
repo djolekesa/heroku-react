@@ -1,22 +1,18 @@
 import React, { useState, FormEvent } from 'react';
-import { LoginCredentials, login, updateImage } from '../services/authService';
+import { LoginCredentials, login, updateImage } from '../services/dbService';
 // @ts-ignore
 import SimpleFileUpload from 'react-simple-file-upload';
 import UserList from './UserList';
 
 const LoginForm: React.FC = () => {
-  console.log('ALOOO');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [showUsers, setShowUsers] = useState<boolean>(false);
-  const [token, setToken] = useState<string>('');
-  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
 
   async function handleFile(url: string) {
     console.log('The URL of the file is ' + url);
     await updateImage(url, email);
-    setUploadedFile(url);
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -26,9 +22,7 @@ const LoginForm: React.FC = () => {
 
     const credentials: LoginCredentials = { email, password };
     try {
-      const response = await login(credentials);
-      // console.log('Login successful:', response);
-      // Handle successful login here (e.g., save the token, redirect, etc.)
+      await login(credentials);
       setIsLoggedIn(true);
     } catch (error) {
       setError('Login failed. Please check your credentials and try again.');
@@ -70,7 +64,7 @@ const LoginForm: React.FC = () => {
           </header>
           <div className='upload-wrapper'>
             <SimpleFileUpload
-              apiKey='96791e75c8d52ce4723813baa04d0d6b' // Move this to env file
+              apiKey={process.env.REACT_APP_FILE_UPLOAD_KEY}
               onSuccess={handleFile}
               preview={false}
             />

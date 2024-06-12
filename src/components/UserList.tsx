@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listUsers, User } from '../services/authService';
+import { listUsers, User } from '../services/dbService';
 import './UserList.css';
 
 const UserList: React.FC = () => {

@@ -21,19 +21,36 @@ export interface User {
 }
 
 const axiosInstance = axios.create({
-  baseURL: 'https://career-path-djole-cc1105963d96.herokuapp.com',
+  baseURL: process.env.REACT_APP_PUBLIC_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    // Handle request error here
+    return Promise.reject(error);
+  },
+);
 export const login = async (
   credentials: LoginCredentials,
 ): Promise<LoginResponse> => {
   try {
     const response = await axiosInstance.post<LoginResponse>(
-      `/api/user/login`,
+      `/api/login`,
       credentials,
     );
+    localStorage.setItem('accessToken', response.data as unknown as string);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -44,6 +61,7 @@ export const login = async (
 };
 
 export const listUsers = async (): Promise<User[]> => {
+  console.log('TOKEN: ', localStorage.getItem('token'));
   const response = await axiosInstance.get(`/api/user/list`);
   console.log('listed userssss: ', response);
   return response.data;
