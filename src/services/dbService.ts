@@ -1,16 +1,13 @@
 import axios from 'axios';
 
-export interface LoginCredentials {
+export interface AuthCredentials {
   email: string;
   password: string;
+  username?: string;
 }
 
 export interface LoginResponse {
   token: string;
-  user: {
-    id: string;
-    email: string;
-  };
 }
 
 export interface User {
@@ -43,7 +40,7 @@ axiosInstance.interceptors.request.use(
   },
 );
 export const login = async (
-  credentials: LoginCredentials,
+  credentials: AuthCredentials,
 ): Promise<LoginResponse> => {
   try {
     const response = await axiosInstance.post<LoginResponse>(
@@ -57,6 +54,17 @@ export const login = async (
       throw new Error(error.response.data.message || 'Failed to login');
     }
     throw new Error('Failed to login');
+  }
+};
+
+export const register = async (credentials: AuthCredentials): Promise<void> => {
+  try {
+    await axiosInstance.post<void>(`/api/user/register`, credentials);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to register');
+    }
+    throw new Error('Failed to register');
   }
 };
 

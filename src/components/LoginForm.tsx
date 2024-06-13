@@ -1,10 +1,12 @@
 import React, { useState, FormEvent } from 'react';
-import { LoginCredentials, login, updateImage } from '../services/dbService';
+import { AuthCredentials, login, updateImage } from '../services/dbService';
 // @ts-ignore
 import SimpleFileUpload from 'react-simple-file-upload';
 import UserList from './UserList';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -15,12 +17,14 @@ const LoginForm: React.FC = () => {
     await updateImage(url, email);
   }
 
+  const goToRegisterPage = () => {
+    navigate('/register');
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
 
-    const credentials: LoginCredentials = { email, password };
+    const credentials: AuthCredentials = { email, password };
     try {
       await login(credentials);
       setIsLoggedIn(true);
@@ -33,6 +37,7 @@ const LoginForm: React.FC = () => {
     <div className='app-container'>
       {!isLoggedIn ? (
         <div className='login-form'>
+          <div> Please Login</div>
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor='email'>Email:</label>
@@ -55,6 +60,9 @@ const LoginForm: React.FC = () => {
               />
             </div>
             <button type='submit'>Login</button>
+            <button className='navigateToLogin' onClick={goToRegisterPage}>
+              Go to register page
+            </button>
           </form>
         </div>
       ) : (

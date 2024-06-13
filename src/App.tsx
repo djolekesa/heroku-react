@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,9 @@ const App: React.FC = () => {
           <Routes>
             <Route path='/login' element={<LoginForm />}>
               Login
+            </Route>
+            <Route path='/register' element={<RegisterForm />}>
+              Register
             </Route>
           </Routes>
         </Router>
